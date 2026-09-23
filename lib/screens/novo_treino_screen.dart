@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Tela 3: Criar Treino (Novo Treino)
-/// Topo amarelo com título e descrição; card inferior com campos arredondados
-/// e seletor das zonas de frequência cardíaca (Z1 a Z5).
+/// Tela Criar Treino (Novo Treino)
+/// Topo amarelo com título e descrição; card inferior com campos arredondados,
+/// seletor de Categoria (Longão, Intervalado, Regenerativo) e seletor das zonas (Z1 a Z5).
+/// Conforme solicitação, a persistência de dados ainda não está ativa (apenas protótipo visual).
 class NovoTreinoScreen extends StatefulWidget {
   const NovoTreinoScreen({super.key});
 
@@ -16,6 +17,9 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
   final TextEditingController _repeticoesController = TextEditingController();
   final TextEditingController _distanciaController = TextEditingController();
 
+  String _selectedCategory = 'Intervalado';
+  final List<String> _categories = ['Longão', 'Intervalado', 'Regenerativo'];
+
   String _selectedZone = 'Z5';
   final List<String> _zones = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5'];
 
@@ -27,10 +31,11 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
     super.dispose();
   }
 
-  void _saveWorkout() {
+  void _onSavePressed() {
+    // Simulação visual de salvamento sem persistência de dados no momento
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Treino cadastrado com sucesso na Zona $_selectedZone!'),
+        content: Text('Treino "$_selectedCategory" na Zona $_selectedZone (Persistência ainda não implementada)'),
         backgroundColor: AppColors.dark,
         duration: const Duration(seconds: 2),
       ),
@@ -51,9 +56,7 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ==========================================
-            // SEÇÃO SUPERIOR: TOPO AMARELO COM TÍTULO
-            // ==========================================
+            // Seção Superior: Topo Amarelo com Botão de Voltar e Título
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: IconButton(
@@ -91,9 +94,7 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
 
             const SizedBox(height: 24),
 
-            // ==========================================
-            // SEÇÃO INFERIOR: FORMULÁRIO EM CARD ARREDONDADO
-            // ==========================================
+            // Seção Inferior: Formulário em Card Arredondado
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -120,7 +121,14 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Campo 2: Número de Repetições
+                      // Campo 2: Categoria do Treino (Seletor Longão, Intervalado, Regenerativo)
+                      _buildFieldLabel('Categoria do Treino'),
+                      const SizedBox(height: 8),
+                      _buildCategorySelector(),
+
+                      const SizedBox(height: 20),
+
+                      // Campo 3: Número de Repetições
                       _buildFieldLabel('Número de Repetições'),
                       const SizedBox(height: 8),
                       _buildPillInput(
@@ -131,7 +139,7 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Campo 3: Distância
+                      // Campo 4: Distância
                       _buildFieldLabel('Distância'),
                       const SizedBox(height: 8),
                       _buildPillInput(
@@ -141,7 +149,7 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Campo 4: Zona de Frequência Cardíaca (Pill seletor Z1 a Z5)
+                      // Campo 5: Zona de Frequência Cardíaca (Pill seletor Z1 a Z5)
                       _buildFieldLabel('Zona de Frequência Cardíaca'),
                       const SizedBox(height: 8),
                       _buildHeartRateZoneSelector(),
@@ -161,7 +169,7 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          onPressed: _saveWorkout,
+                          onPressed: _onSavePressed,
                           child: const Text(
                             'Salvar',
                             style: TextStyle(
@@ -232,6 +240,65 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
     );
   }
 
+  /// Faixa de seleção de Categoria (Longão, Intervalado, Regenerativo)
+  Widget _buildCategorySelector() {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      child: Row(
+        children: _categories.map((category) {
+          final isSelected = category == _selectedCategory;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.primaryYellow : Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.primaryYellow.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  category,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+                    color: isSelected ? AppColors.dark : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// Faixa de seleção da Zona de Frequência Cardíaca (Z1 a Z5)
   Widget _buildHeartRateZoneSelector() {
     return Container(
       height: 56,

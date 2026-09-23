@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 
-/// Categorias de filtro para treinos
+/// Categorias de treino
 enum WorkoutCategory {
   all,
-  running,
-  intervals,
-  recovery,
+  running, // Longão
+  intervals, // Intervalado
+  recovery, // Regenerativo
+}
+
+extension WorkoutCategoryExtension on WorkoutCategory {
+  String get displayName {
+    switch (this) {
+      case WorkoutCategory.all:
+        return 'Todos';
+      case WorkoutCategory.running:
+        return 'Longão';
+      case WorkoutCategory.intervals:
+        return 'Intervalado';
+      case WorkoutCategory.recovery:
+        return 'Regenerativo';
+    }
+  }
 }
 
 /// Modelo de dados representando um treino no PaceWeather
@@ -25,6 +40,8 @@ class WorkoutModel {
     required this.category,
     this.heartRateZone = 'Z2',
   });
+
+  String get categoryName => category.displayName;
 
   /// Lista mockada estática exatamente conforme o protótipo visual
   static List<WorkoutModel> getMockWorkouts() {

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 import 'screens/meus_treinos/meus_treinos_screen.dart';
 import 'screens/novo_treino_screen.dart';
-import 'screens/splash_screen.dart';
 import 'theme/app_colors.dart';
 
 void main() {
@@ -35,9 +34,8 @@ class PaceWeatherApp extends StatelessWidget {
         ),
         fontFamily: 'sans-serif',
       ),
-      initialRoute: '/',
+      initialRoute: '/home',
       routes: {
-        '/': (context) => const SplashScreen(),
         '/home': (context) => const HomeScreen(),
         '/meus_treinos': (context) => const MeusTreinosScreen(),
         '/novo_treino': (context) => const NovoTreinoScreen(),

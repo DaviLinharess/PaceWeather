@@ -4,9 +4,9 @@ import '../widgets/pace_weather_logo.dart';
 import 'meus_treinos/meus_treinos_screen.dart';
 import 'novo_treino_screen.dart';
 
-/// Tela 2: Home
-/// Exibe a logo superior e o card meteorológico com boas-vindas "Bem-vindo, Davi !",
-/// informações climáticas (OpenWeather API simulation) e botões "Treinar" e "Novo Treino".
+/// Tela Home do PaceWeather
+/// Exibe a logo superior, a faixa de saudação "Bem-vindo, Davi !",
+/// o bloco reservado para a API do Clima e os botões "Treinar" e "Novo Treino".
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            // Seção Superior: Logotipo PaceWeather
+            // Seção Superior: Logotipo Oficial PaceWeather
             const Expanded(
               flex: 4,
               child: Center(
@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // Seção Inferior: Card com Cabeçalho Amarelo e Bloco Meteorológico Azul
+            // Seção Inferior: Faixa Amarela com Saudação e Bloco Azul da API do Clima
             Expanded(
               flex: 6,
               child: Container(
@@ -60,12 +60,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
 
-                    // Card Azul com os Dados Meteorológicos
+                    // Card Azul com a indicação da API do Clima
                     Expanded(
                       child: Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                        margin: const EdgeInsets.fromLTRB(6, 0, 6, 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                         decoration: const BoxDecoration(
                           color: AppColors.lightBlue,
                           borderRadius: BorderRadius.only(
@@ -78,59 +78,51 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            // Bloco de Informações Meteorológicas
-                            const Column(
-                              children: [
-                                Text(
-                                  'Nublado',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.dark,
-                                    letterSpacing: -0.5,
-                                  ),
+                            // Bloco reservado para a futura integração da API externa
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.35),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  width: 1.5,
                                 ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Temperatura Atual:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.dark,
-                                  ),
-                                ),
-                                SizedBox(height: 2),
-                                Text(
-                                  '20ºC',
-                                  style: TextStyle(
-                                    fontSize: 42,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.dark,
-                                    height: 1.1,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Condição do Tempo:',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                              ),
+                              child: const Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.cloud_outlined,
+                                    size: 48,
                                     color: AppColors.dark,
                                   ),
-                                ),
-                                SizedBox(height: 2),
-                                Text(
-                                  'Ventos Fortes',
-                                  style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.dark,
+                                  SizedBox(height: 12),
+                                  Text(
+                                    'API do Clima aparecerá aqui',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColors.dark,
+                                      letterSpacing: -0.3,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(height: 6),
+                                  Text(
+                                    'Integração futura com OpenWeather API',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.dark,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
 
-                            // Botões de Ação Inferiores: "Treinar" e "Novo Treino"
+                            // Botões de Navegação: "Treinar" e "Novo Treino"
                             Row(
                               children: [
                                 Expanded(

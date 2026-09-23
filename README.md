@@ -15,30 +15,25 @@ A aplicação cruza dados climáticos em tempo real (OpenWeather API) com a gest
 
 ---
 
-## 📱 Telas Desenvolvidas com Base nos Protótipos
+## 📱 Tela Implementada (Escopo da Atividade)
 
-1. **Tela 1: Carregamento (Splash Screen)**
-   - Elementos geométricos orgânicos nos cantos (amarelo e azul);
-   - Logotipo oficial vetorial com o corredor, nuvem, sol e tipografia "PaceWeather";
-   - Transição suave para a tela principal.
+A aplicação concentra-se na tela **Meus Treinos**, atendendo simultaneamente aos requisitos de:
+1. **Layout Responsivo (Atividade 1):** Adaptação dinâmica entre mobile e widescreen/desktop;
+2. **Tratamento de Eventos (Atividade 2):** Ciclo completo de interação (*Ação → Processamento → Feedback*).
 
-2. **Tela 2: Home**
-   - Logotipo em destaque na área superior;
-   - Card azul com dados meteorológicos: *Nublado*, *20ºC*, *Ventos Fortes*;
-   - Faixa de saudação (*"Bem-vindo, Davi !"*);
-   - Botões de navegação rápida: **Treinar** e **Novo Treino**.
+### Seções Visuais e Componentes
+- **Seção 1 (Cabeçalho e Busca):** Logotipo oficial, ícones de navegação, campo `TextField` com reação em tempo real (`onChanged`) e 2 botões de comportamentos distintos (`onPressed` condicional e limpeza);
+- **Seção 2 (Filtros e Clima):** Barra de categorias (`ALL`, Corrida, Intervalado, Frequência Cardíaca) e o indicador explícito **"API do Clima aparecerá aqui"**;
+- **Seção 3 (Grade de Treinos Interativa):** Cards amarelos com suporte a múltiplos gestos (`onTap` para iniciar sessão e `onLongPress` para abrir diálogo de detalhes e favoritar).
 
-3. **Tela 3: Criar Treino (Novo Treino)**
-   - Topo amarelo enérgico com botão de retorno e descrição explicativa;
-   - Card arredondado com campos em pílula branca (*Título*, *Repetições*, *Distância*);
-   - Seletor interativo de zonas de frequência cardíaca (**Z1**, **Z2**, **Z3**, **Z4**, **Z5**);
-   - Botão de ação estilizado em pílula preta: **Salvar**.
+---
 
-4. **Tela 4: Meus Treinos (Tela Responsiva Obrigatória da Atividade)**
-   - **Cabeçalho:** Botão de início, logotipo centralizado e botão de perfil;
-   - **Barra de Filtros:** Seletores arredondados com realce ativo em amarelo (`ALL`, Corrida, Intervalado, Frequência Cardíaca);
-   - **Grade de Treinos:** Cards amarelos vibrantes com badge do tipo de treino, título, distância e botão circular de play;
-   - **Responsividade com `LayoutBuilder`:** Alterna automaticamente entre `MeusTreinosMobileLayout` (< 600px, 2 colunas) e `MeusTreinosDesktopLayout` ($\ge$ 600px, 3 a 4 colunas com cabeçalho expandido).
+## ⚡ Tratamento de Eventos e Encadeamento
+
+- **`onChanged` (`TextField`):** Monitora a digitação com logs no console e validação para habilitar a busca;
+- **`onPressed` (Botão 1 - Filtrar):** Ação principal condicional que dispara um `AlertDialog` de confirmação e, na sequência, atualiza a lista e emite um `SnackBar`;
+- **`onPressed` (Botão 2 - Limpar):** Ação secundária de reset do campo e da listagem;
+- **`onTap` vs `onLongPress` (`GestureDetector`):** Gestos distintos no mesmo componente gerando respostas visuais diferentes (`SnackBar` imediato vs `AlertDialog` de inspeção).
 
 ---
 
@@ -46,29 +41,27 @@ A aplicação cruza dados climáticos em tempo real (OpenWeather API) com a gest
 
 ```
 PaceWeather/
-├── pubspec.yaml                 # Configuração do Flutter e metadados
+├── pubspec.yaml                 # Configuração do Flutter e assets
+├── pubspec.lock                 # Versões congeladas das dependências
+├── analysis_options.yaml        # Regras de código limpo (Linter)
 ├── README.md                    # Documentação do projeto
-├── ENTREGA_MOODLE.md            # Texto oficial de 3-5 linhas para a entrega
-├── preview/                     # Simulador web interativo para testes e screenshots
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
+├── ENTREGA_MOODLE.md            # Registro e respostas para envio no Moodle
+├── assets/
+│   └── images/
+│       └── logo.png             # Logotipo oficial PaceWeather
 └── lib/
-    ├── main.dart                # MaterialApp com rotas e seletor rápido
+    ├── main.dart                # Ponto de entrada com MaterialApp
     ├── theme/
     │   └── app_colors.dart      # Paleta de cores oficial
     ├── models/
     │   └── workout_model.dart   # Modelo de dados de treino e lista mockada
     ├── widgets/
-    │   ├── pace_weather_logo.dart # Logo vetorial personalizada
+    │   ├── pace_weather_logo.dart # Componente oficial da logo
     │   ├── filter_pill.dart     # Botão de filtro da lista
-    │   └── workout_card.dart    # Card de treino com badge e botão play
+    │   └── workout_card.dart    # Card de treino com onTap e onLongPress
     └── screens/
-        ├── splash_screen.dart   # Tela de carregamento
-        ├── home_screen.dart     # Tela Home (clima)
-        ├── novo_treino_screen.dart # Tela de criação de treino
         └── meus_treinos/
-            ├── meus_treinos_screen.dart  # Tela com LayoutBuilder
+            ├── meus_treinos_screen.dart  # Tela com LayoutBuilder e lógica de eventos
             ├── meus_treinos_mobile.dart  # Layout Mobile (< 600px)
             └── meus_treinos_desktop.dart # Layout Desktop/Tablet (>= 600px)
 ```
@@ -77,7 +70,6 @@ PaceWeather/
 
 ## 🚀 Como Executar o Projeto
 
-### Com o Flutter SDK instalado:
 ```bash
 # Obter as dependências
 flutter pub get
@@ -85,6 +77,3 @@ flutter pub get
 # Executar no emulador ou dispositivo conectado
 flutter run
 ```
-
-### Visualização imediata via Simulador Web:
-Abra o arquivo `preview/index.html` em qualquer navegador (Chrome, Edge, Firefox) para navegar por todas as telas, alternar tamanhos de tela e testar os pontos de quebra da responsividade!
