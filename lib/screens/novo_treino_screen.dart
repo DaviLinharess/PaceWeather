@@ -32,18 +32,21 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
   }
 
   void _onSavePressed() {
-    // Simulação visual de salvamento sem persistência de dados no momento
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Treino "$_selectedCategory" na Zona $_selectedZone (Persistência ainda não implementada)'),
-        backgroundColor: AppColors.dark,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+    final title = _tituloController.text.trim().isEmpty
+        ? 'Treino $_selectedCategory'
+        : _tituloController.text.trim();
+    final metric = _distanciaController.text.trim().isNotEmpty
+        ? _distanciaController.text.trim()
+        : (_repeticoesController.text.trim().isNotEmpty
+            ? _repeticoesController.text.trim()
+            : '5.000m');
+
+    // REQUISITO OBRIGATÓRIO 5: Retorno de resultado para a tela anterior
+    Navigator.of(context).pop({
+      'title': title,
+      'metric': metric,
+      'category': _selectedCategory,
+      'zone': _selectedZone,
     });
   }
 

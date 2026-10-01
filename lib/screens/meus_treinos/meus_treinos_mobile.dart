@@ -46,13 +46,15 @@ class MeusTreinosMobileLayout extends StatelessWidget {
         // SEÇÃO 1: CABEÇALHO, LOGO E BARRA DE BUSCA
         // ==========================================
         Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 4),
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.home_outlined, size: 28, color: AppColors.dark),
+                icon: const Icon(Icons.home_outlined,
+                    size: 28, color: AppColors.dark),
                 onPressed: onHomePressed,
                 tooltip: 'Início',
               ),
@@ -61,7 +63,8 @@ class MeusTreinosMobileLayout extends StatelessWidget {
                 showText: true,
               ),
               IconButton(
-                icon: const Icon(Icons.person_outline, size: 28, color: AppColors.dark),
+                icon: const Icon(Icons.person_outline,
+                    size: 28, color: AppColors.dark),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -94,14 +97,16 @@ class MeusTreinosMobileLayout extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
             child: Row(
               children: [
-                const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
+                const Icon(Icons.search,
+                    color: AppColors.textSecondary, size: 22),
                 const SizedBox(width: 8),
                 // Campo de Texto com reação em tempo real ao evento onChanged
                 Expanded(
                   child: TextField(
                     controller: searchController,
                     onChanged: onSearchChanged,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w600),
                     decoration: const InputDecoration(
                       hintText: 'Buscar treino (ex: Longo, 400m)...',
                       hintStyle: TextStyle(fontSize: 13, color: Colors.grey),
@@ -115,7 +120,9 @@ class MeusTreinosMobileLayout extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.filter_list_rounded,
-                    color: isSearchButtonEnabled ? AppColors.dark : Colors.grey.shade400,
+                    color: isSearchButtonEnabled
+                        ? AppColors.dark
+                        : Colors.grey.shade400,
                   ),
                   tooltip: 'Aplicar Filtro de Busca',
                   onPressed: isSearchButtonEnabled ? onPrimarySearch : null,
@@ -123,7 +130,8 @@ class MeusTreinosMobileLayout extends StatelessWidget {
 
                 // Botão 2: Ação Secundária (onPressed com comportamento diferente - Limpeza)
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: Colors.grey, size: 20),
+                  icon: const Icon(Icons.close_rounded,
+                      color: Colors.grey, size: 20),
                   tooltip: 'Limpar Busca e Filtros',
                   onPressed: onSecondaryClear,
                 ),
@@ -180,15 +188,20 @@ class MeusTreinosMobileLayout extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.search_off_rounded, size: 48, color: Colors.grey),
+                        const Icon(Icons.search_off_rounded,
+                            size: 48, color: Colors.grey),
                         const SizedBox(height: 8),
                         const Text(
                           'Nenhum treino encontrado.',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey),
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey),
                         ),
                         TextButton(
                           onPressed: onSecondaryClear,
-                          child: const Text('Limpar busca', style: TextStyle(color: AppColors.primaryBlue)),
+                          child: const Text('Limpar busca',
+                              style: TextStyle(color: AppColors.primaryBlue)),
                         ),
                       ],
                     ),
@@ -196,7 +209,8 @@ class MeusTreinosMobileLayout extends StatelessWidget {
                 : GridView.builder(
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.only(top: 6, bottom: 24),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 14,

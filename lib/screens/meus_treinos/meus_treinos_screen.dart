@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../models/workout_model.dart';
 import '../../theme/app_colors.dart';
-import '../home_screen.dart';
+import '../main_navigation_shell.dart';
 import 'meus_treinos_desktop.dart';
 import 'meus_treinos_mobile.dart';
 
 /// Tela principal "Meus Treinos".
-/// Integra os requisitos da Atividade 1 (Layout Responsivo via LayoutBuilder)
-/// e da Atividade 2 (Tratamento de Eventos, Ciclo Ação-Processamento-Feedback e Encadeamento).
 class MeusTreinosScreen extends StatefulWidget {
   const MeusTreinosScreen({super.key});
 
@@ -36,7 +34,7 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
     super.dispose();
   }
 
-  /// Lista filtrada dinamicamente por Categoria E por Palavra-chave (com normalização de espaços e quebras de linha)
+  /// Lista filtrada por Categoria e Palavra-chave
   List<WorkoutModel> get _filteredWorkouts {
     return _allWorkouts.where((workout) {
       final matchesCategory = _selectedCategory == WorkoutCategory.all ||
@@ -46,24 +44,24 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
         return matchesCategory;
       }
 
-      // Normaliza quebras de linha '\n' e múltiplos espaços para que 'Treino\nLongo' case perfeitamente com 'Treino Longo'
-      final query = _activeSearchQuery.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
-      final normalizedTitle = workout.title.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
-      final normalizedMetric = workout.metric.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+      // Normaliza quebras de linha
+      final query = _activeSearchQuery
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'\s+'), ' ');
+      final normalizedTitle =
+          workout.title.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+      final normalizedMetric =
+          workout.metric.toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
 
-      final matchesQuery = normalizedTitle.contains(query) ||
-          normalizedMetric.contains(query);
+      final matchesQuery =
+          normalizedTitle.contains(query) || normalizedMetric.contains(query);
 
       return matchesCategory && matchesQuery;
     }).toList();
   }
 
-  // =========================================================================
-  // TRATAMENTO DE EVENTOS - ATIVIDADE 2
-  // =========================================================================
-
-  /// 1. ENTRADA DE DADOS EM TEMPO REAL (TextField: onChanged)
-  /// Reage a cada caractere digitado, filtra em tempo real, exibe no console e valida tamanho mínimo.
+  /// Filtra em tempo real a cada digitação
   void _onSearchChanged(String value) {
     debugPrint('[PaceWeather Event] onChanged: "$value"');
 
@@ -74,14 +72,12 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
     });
   }
 
-  /// 2. AÇÃO PRINCIPAL (Botão 1: onPressed com condição e encadeamento)
-  /// Só pode ser executada se houver texto válido digitado.
-  /// Fluxo de encadeamento: Botão ➔ Validação ➔ AlertDialog ➔ Confirmação ➔ Estado + SnackBar.
+  /// Ação do botão de busca, só executa se houver texto válido digitado.
   void _onPrimaryActionSearch() {
     final query = _searchController.text.trim();
-    if (query.isEmpty) return; // Proteção condicional
+    if (query.isEmpty) return;
 
-    // Dispara a primeira etapa do encadeamento: Exibe diálogo de confirmação
+    // Exibe mensagem de confirmação
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -100,7 +96,8 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+              child:
+                  const Text('Cancelar', style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -108,7 +105,7 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
                 foregroundColor: AppColors.dark,
               ),
               onPressed: () {
-                // Etapa 2 do encadeamento: Fecha diálogo, garante atualização e dispara SnackBar
+                // Fecha diálogo, atualiza estado e exibe SnackBar
                 Navigator.of(dialogContext).pop();
 
                 setState(() {
@@ -127,7 +124,8 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
                   ),
                 );
               },
-              child: const Text('Aplicar Filtro', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Aplicar Filtro',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -135,8 +133,7 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
     );
   }
 
-  /// 3. AÇÃO SECUNDÁRIA (Botão 2: onPressed com comportamento diferente)
-  /// Limpa o campo de texto, restaura a listagem completa e gera feedback imediato.
+  /// Ação do botão limpar, limpa o campo de texto, restaura a listagem completa e exibe SnackBar.
   void _onSecondaryActionClear() {
     _searchController.clear();
     setState(() {
@@ -154,23 +151,15 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
     );
   }
 
-  /// 4. INTERAÇÃO POR GESTO - Gesto 1: onTap (Toque rápido no card)
-  /// Inicia o treino e emite SnackBar de início de sessão.
+  /// Ao tocar no card, navega para a tela de detalhes passando o modelo via arguments em rota nomeada.
   void _onCardTap(WorkoutModel workout) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '▶ Iniciando ${workout.title.replaceAll('\n', ' ')} (${workout.metric})',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: AppColors.dark,
-        duration: const Duration(seconds: 2),
-      ),
+    Navigator.of(context).pushNamed(
+      '/workout_details',
+      arguments: workout,
     );
   }
 
-  /// 4. INTERAÇÃO POR GESTO - Gesto 2: onLongPress (Toque longo / segurar o card)
-  /// Exibe diálogo detalhado de inspeção com encadeamento de favoritar o treino.
+  /// Exibe diálogo detalhado ao tocar e segurar no card.
   void _onCardLongPress(WorkoutModel workout) {
     showDialog(
       context: context,
@@ -180,18 +169,27 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
             children: [
               Icon(workout.icon, color: AppColors.dark),
               const SizedBox(width: 8),
-              Text(workout.title.replaceAll('\n', ' ')),
+              Expanded(
+                child: Text(
+                  workout.title.replaceAll('\n', ' '),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+              ),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('• Distância/Carga: ${workout.metric}', style: const TextStyle(fontSize: 15)),
+              Text('• Distância/Carga: ${workout.metric}',
+                  style: const TextStyle(fontSize: 15)),
               const SizedBox(height: 6),
-              Text('• Zona Cardíaca Alvo: ${workout.heartRateZone}', style: const TextStyle(fontSize: 15)),
+              Text('• Zona Cardíaca Alvo: ${workout.heartRateZone}',
+                  style: const TextStyle(fontSize: 15)),
               const SizedBox(height: 6),
-              Text('• Categoria: ${workout.categoryName}', style: const TextStyle(fontSize: 15)),
+              Text('• Categoria: ${workout.categoryName}',
+                  style: const TextStyle(fontSize: 15)),
             ],
           ),
           actions: [
@@ -199,18 +197,35 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
               onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('Fechar', style: TextStyle(color: Colors.grey)),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                // REQUISITO 4: Abre detalhes via arguments
+                Navigator.of(context).pushNamed(
+                  '/workout_details',
+                  arguments: workout,
+                );
+              },
+              child: const Text(
+                'Ver Detalhes (arguments)',
+                style: TextStyle(
+                    color: AppColors.primaryBlue, fontWeight: FontWeight.bold),
+              ),
+            ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryYellow,
                 foregroundColor: AppColors.dark,
               ),
               icon: const Icon(Icons.star, size: 18),
-              label: const Text('Favoritar', style: TextStyle(fontWeight: FontWeight.bold)),
+              label: const Text('Favoritar',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('⭐ Treino ${workout.title.replaceAll('\n', ' ')} adicionado aos favoritos!'),
+                    content: Text(
+                        '⭐ Treino ${workout.title.replaceAll('\n', ' ')} adicionado aos favoritos!'),
                     backgroundColor: AppColors.dark,
                     duration: const Duration(seconds: 2),
                   ),
@@ -231,19 +246,66 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
   }
 
   void _navigateToHome() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false,
-    );
+    MainNavigationShell.switchTab(context, 0);
+  }
+
+  /// Abre formulário de novo treino e aguarda retorno de valor via Navigator.pop
+  Future<void> _navigateToAddWorkout() async {
+    final result = await Navigator.of(context).pushNamed('/novo_treino');
+    if (result != null && result is Map && mounted) {
+      final categoryStr = result['category']?.toString() ?? 'Longão';
+      final WorkoutCategory cat;
+      if (categoryStr == 'Longão') {
+        cat = WorkoutCategory.running;
+      } else if (categoryStr == 'Regenerativo') {
+        cat = WorkoutCategory.recovery;
+      } else {
+        cat = WorkoutCategory.intervals;
+      }
+
+      final newWorkout = WorkoutModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: result['title']?.toString() ?? 'Novo Treino',
+        metric: result['metric']?.toString() ?? '5.000m',
+        icon: Icons.directions_run,
+        category: cat,
+        heartRateZone: result['zone']?.toString() ?? 'Z2',
+      );
+
+      setState(() {
+        _allWorkouts.insert(0, newWorkout);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Requisito 5 (pop com valor): Treino "${newWorkout.title}" recebido e inserido na lista!',
+          ),
+          backgroundColor: AppColors.dark,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryYellow,
+        foregroundColor: AppColors.dark,
+        elevation: 3,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text(
+          'Novo Treino (pop valor)',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        onPressed: _navigateToAddWorkout,
+      ),
       body: SafeArea(
-        // LayoutBuilder conforme Atividade 1
         child: LayoutBuilder(
+          // LayoutBuilder para responsividade
           builder: (context, constraints) {
             if (constraints.maxWidth < 600) {
               // Layout Mobile (< 600px)

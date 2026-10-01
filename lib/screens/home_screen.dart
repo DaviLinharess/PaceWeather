@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../widgets/pace_weather_logo.dart';
-import 'meus_treinos/meus_treinos_screen.dart';
-import 'novo_treino_screen.dart';
+import 'main_navigation_shell.dart';
 
-/// Tela Home do PaceWeather
-/// Exibe a logo superior, a faixa de saudação "Bem-vindo, Davi !",
-/// o bloco reservado para a API do Clima e os botões "Treinar" e "Novo Treino".
+// Tela Home do PaceWeather
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +15,7 @@ class HomeScreen extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            // Seção Superior: Logotipo Oficial PaceWeather
+            // Logotipo Oficial PaceWeather
             const Expanded(
               flex: 4,
               child: Center(
@@ -30,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // Seção Inferior: Faixa Amarela com Saudação e Bloco Azul da API do Clima
+            // Faixa Amarela com "olá" e Bloco Azul da API do Clima
             Expanded(
               flex: 6,
               child: Container(
@@ -44,9 +41,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Faixa de Saudação
+                    // parte do "ola"
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -65,7 +63,8 @@ class HomeScreen extends StatelessWidget {
                       child: Container(
                         width: double.infinity,
                         margin: const EdgeInsets.fromLTRB(6, 0, 6, 6),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 24),
                         decoration: const BoxDecoration(
                           color: AppColors.lightBlue,
                           borderRadius: BorderRadius.only(
@@ -80,7 +79,8 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             // Bloco reservado para a futura integração da API externa
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 28),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.35),
                                 borderRadius: BorderRadius.circular(24),
@@ -131,17 +131,15 @@ class HomeScreen extends StatelessWidget {
                                       backgroundColor: AppColors.dark,
                                       foregroundColor: Colors.white,
                                       elevation: 4,
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                     ),
                                     onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => const MeusTreinosScreen(),
-                                        ),
-                                      );
+                                      // Alterna para a aba 1 (Treinos) no BottomNavigationBar
+                                      MainNavigationShell.switchTab(context, 1);
                                     },
                                     child: const Text(
                                       'Treinar',
@@ -159,17 +157,32 @@ class HomeScreen extends StatelessWidget {
                                       backgroundColor: AppColors.dark,
                                       foregroundColor: Colors.white,
                                       elevation: 4,
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                     ),
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => const NovoTreinoScreen(),
-                                        ),
-                                      );
+                                    onPressed: () async {
+                                      // REQUISITO 5: Abre rota nomeada e aguarda resultado retornado via Navigator.pop
+                                      final result = await Navigator.of(context)
+                                          .pushNamed('/novo_treino');
+
+                                      if (result != null &&
+                                          result is Map &&
+                                          context.mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Requisito 5: Treino "${result['title']}" salvo! (Retornado via Navigator.pop)',
+                                            ),
+                                            backgroundColor: AppColors.dark,
+                                            duration:
+                                                const Duration(seconds: 3),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: const Text(
                                       'Novo Treino',

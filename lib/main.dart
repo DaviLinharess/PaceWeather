@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'screens/home_screen.dart';
-import 'screens/meus_treinos/meus_treinos_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/main_navigation_shell.dart';
 import 'screens/novo_treino_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/workout_details_screen.dart';
 import 'theme/app_colors.dart';
 
 void main() {
@@ -34,10 +36,12 @@ class PaceWeatherApp extends StatelessWidget {
         ),
         fontFamily: 'sans-serif',
       ),
-      initialRoute: '/home',
+      initialRoute: '/login', //
       routes: {
-        '/home': (context) => const HomeScreen(),
-        '/meus_treinos': (context) => const MeusTreinosScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/main': (context) => const MainNavigationShell(),
+        '/settings': (context) => const SettingsScreen(),
+        '/workout_details': (context) => const WorkoutDetailsScreen(),
         '/novo_treino': (context) => const NovoTreinoScreen(),
       },
     );
