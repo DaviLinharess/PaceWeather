@@ -6,6 +6,7 @@ import 'screens/novo_treino_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/workout_details_screen.dart';
 import 'theme/app_colors.dart';
+import 'widgets/app_navigator_observer.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,10 @@ class PaceWeatherApp extends StatelessWidget {
         ),
         fontFamily: 'sans-serif',
       ),
-      initialRoute: '/login', //
+      navigatorObservers: [
+        AppNavigatorObserver(scope: 'RootNavigator'),
+      ],
+      initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
         '/main': (context) => const MainNavigationShell(),

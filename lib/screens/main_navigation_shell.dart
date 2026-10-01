@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/workout_model.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/app_navigator_observer.dart';
 import '../widgets/pace_weather_logo.dart';
 import 'home_screen.dart';
 import 'meus_treinos/meus_treinos_screen.dart';
@@ -49,8 +50,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   /// Constrói o Navigator aninhado para cada aba, preservando o histórico interno
   Widget _buildTabNavigator(int index, Widget initialScreen) {
+    final tabNames = ['Aba Início', 'Aba Treinos', 'Aba Perfil'];
     return Navigator(
       key: _navigatorKeys[index],
+      observers: [
+        AppNavigatorObserver(scope: tabNames[index]),
+      ],
       onGenerateRoute: (settings) {
         // Rotas que podem ser empilhadas dentro da própria aba
         if (settings.name == '/workout_details') {

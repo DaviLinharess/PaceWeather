@@ -51,37 +51,6 @@ class WorkoutDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Banner Didático do Requisito Obrigatório 4
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.primaryYellow.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.primaryYellow,
-                  width: 1.2,
-                ),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.input_rounded, color: AppColors.dark, size: 22),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Requisito 4: Dados carregados com sucesso via arguments através da rota nomeada "/workout_details"!',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.dark,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             // Card Principal Amarelo do Treino
             Container(
               width: double.infinity,
