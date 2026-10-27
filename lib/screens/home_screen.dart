@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/workout_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/pace_weather_logo.dart';
 import 'main_navigation_shell.dart';
@@ -122,6 +124,77 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
 
+                            // REQUISITO: Widget reativo consumindo estado global compartilhado via Consumer
+                            Consumer<WorkoutProvider>(
+                              builder: (context, workoutProvider, child) {
+                                return Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black
+                                            .withValues(alpha: 0.06),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryYellow
+                                              .withValues(alpha: 0.3),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.fitness_center_rounded,
+                                          color: AppColors.dark,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text(
+                                              'Estado Global',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.textSecondary,
+                                              ),
+                                            ),
+                                            Text(
+                                              '${workoutProvider.totalWorkouts} treinos programados',
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w900,
+                                                color: AppColors.dark,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.sync_rounded,
+                                        color: AppColors.primaryBlue,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+
                             // Botões de Navegação: "Treinar" e "Novo Treino"
                             Row(
                               children: [
@@ -175,7 +248,7 @@ class HomeScreen extends StatelessWidget {
                                             .showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                              'Requisito 5: Treino "${result['title']}" salvo! (Retornado via Navigator.pop)',
+                                              'Treino "${result['title']}" salvo!',
                                             ),
                                             backgroundColor: AppColors.dark,
                                             duration:

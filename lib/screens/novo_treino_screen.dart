@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/workout_model.dart';
+import '../providers/workout_provider.dart';
 import '../theme/app_colors.dart';
 
 /// Tela Criar Treino (Novo Treino)
 /// Topo amarelo com título e descrição; card inferior com campos arredondados,
 /// seletor de Categoria (Longão, Intervalado, Regenerativo) e seletor das zonas (Z1 a Z5).
-/// Conforme solicitação, a persistência de dados ainda não está ativa (apenas protótipo visual).
+/// Modifica o estado global via WorkoutProvider (Provider + ChangeNotifier).
 class NovoTreinoScreen extends StatefulWidget {
   const NovoTreinoScreen({super.key});
 
@@ -41,7 +44,32 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
             ? _repeticoesController.text.trim()
             : '5.000m');
 
-    // REQUISITO OBRIGATÓRIO 5: Retorno de resultado para a tela anterior
+    final WorkoutCategory cat;
+    final IconData icon;
+    if (_selectedCategory == 'Longão') {
+      cat = WorkoutCategory.running;
+      icon = Icons.directions_run;
+    } else if (_selectedCategory == 'Regenerativo') {
+      cat = WorkoutCategory.recovery;
+      icon = Icons.favorite_border;
+    } else {
+      cat = WorkoutCategory.intervals;
+      icon = Icons.timer_outlined;
+    }
+
+    final newWorkout = WorkoutModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: title,
+      metric: metric,
+      icon: icon,
+      category: cat,
+      heartRateZone: _selectedZone,
+    );
+
+    // Modificação do estado compartilhado a partir de um ponto da UI
+    context.read<WorkoutProvider>().addWorkout(newWorkout);
+
+    // Retorna para a tela anterior
     Navigator.of(context).pop({
       'title': title,
       'metric': metric,
@@ -63,7 +91,8 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.dark, size: 28),
+                icon: const Icon(Icons.arrow_back,
+                    color: AppColors.dark, size: 28),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ),
@@ -272,12 +301,14 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primaryYellow : Colors.transparent,
+                  color:
+                      isSelected ? AppColors.primaryYellow : Colors.transparent,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppColors.primaryYellow.withValues(alpha: 0.4),
+                            color:
+                                AppColors.primaryYellow.withValues(alpha: 0.4),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -332,7 +363,8 @@ class _NovoTreinoScreenState extends State<NovoTreinoScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryYellow : Colors.transparent,
+                color:
+                    isSelected ? AppColors.primaryYellow : Colors.transparent,
                 shape: BoxShape.circle,
                 boxShadow: isSelected
                     ? [

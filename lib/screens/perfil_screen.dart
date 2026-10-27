@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/workout_provider.dart';
 import '../theme/app_colors.dart';
 
 /// Tela de Perfil do Atleta (Aba 3 da BottomNavigationBar).
-/// Demonstração de preservação de estado da aba e seção independente de navegação.
+/// Demonstração de preservação de estado da aba e consumo de estado global via Provider.
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
 
@@ -79,37 +81,6 @@ class PerfilScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
-
-              // Banner da Aba 3
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.lightBlue.withValues(alpha: 0.35),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.primaryBlue.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.tab_rounded,
-                        color: AppColors.primaryBlue, size: 22),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Requisito 3: Aba 3 do BottomNavigationBar. Ao alternar entre as abas, a pilha e o estado desta tela são preservados.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.dark,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               const SizedBox(height: 24),
 
               const Text(
@@ -123,27 +94,31 @@ class PerfilScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Cards de Métricas
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.directions_run_rounded,
-                      title: 'Distância',
-                      value: '38.4 km',
-                      color: AppColors.primaryYellow,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      icon: Icons.speed_rounded,
-                      title: 'Pace Médio',
-                      value: "5'14\" /km",
-                      color: AppColors.lightBlue,
-                    ),
-                  ),
-                ],
+              // Cards de Métricas (Consumindo estado global)
+              Consumer<WorkoutProvider>(
+                builder: (context, workoutProvider, child) {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          icon: Icons.fitness_center_rounded,
+                          title: 'Treinos Salvos',
+                          value: '${workoutProvider.totalWorkouts}',
+                          color: AppColors.primaryYellow,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildStatCard(
+                          icon: Icons.speed_rounded,
+                          title: 'Pace Médio',
+                          value: "5'14\" /km",
+                          color: AppColors.lightBlue,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Row(

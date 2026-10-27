@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'providers/workout_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_navigation_shell.dart';
 import 'screens/novo_treino_screen.dart';
@@ -16,7 +18,12 @@ void main() {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const PaceWeatherApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => WorkoutProvider(),
+      child: const PaceWeatherApp(),
+    ),
+  );
 }
 
 class PaceWeatherApp extends StatelessWidget {
