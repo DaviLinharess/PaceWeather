@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/secure_storage_service.dart';
 import '../theme/app_colors.dart';
 import 'pace_weather_logo.dart';
 
@@ -240,11 +241,15 @@ class AppDrawer extends StatelessWidget {
                 color: Colors.redAccent,
               ),
             ),
-            onTap: () {
+            onTap: () async {
+              final navigator = Navigator.of(context, rootNavigator: true);
               Navigator.of(context).pop(); // Fecha o Drawer
+              // Remove o JWT do armazenamento seguro no Logout
+              try {
+                await SecureStorageService().deleteToken();
+              } catch (_) {}
               // pushReplacementNamed para a tela de login removendo o shell da pilha
-              Navigator.of(context, rootNavigator: true)
-                  .pushReplacementNamed('/login');
+              navigator.pushReplacementNamed('/login');
             },
           ),
 

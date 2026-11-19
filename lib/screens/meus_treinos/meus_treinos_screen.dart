@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/workout_model.dart';
 import '../../providers/workout_provider.dart';
+import '../../services/preferences_service.dart';
 import '../../theme/app_colors.dart';
 import '../main_navigation_shell.dart';
 import 'meus_treinos_desktop.dart';
@@ -21,7 +22,25 @@ class MeusTreinosScreen extends StatefulWidget {
 
 class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final PreferencesService _prefsService = PreferencesService();
   bool _isSearchButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSearchFromPreferences();
+  }
+
+  /// Recupera a última pesquisa realizada salva no SharedPreferences (dado não sensível)
+  Future<void> _loadLastSearchFromPreferences() async {
+    final lastSearch = await _prefsService.getLastSearch();
+    if (lastSearch.isNotEmpty && mounted) {
+      setState(() {
+        _searchController.text = lastSearch;
+        _isSearchButtonEnabled = lastSearch.trim().length >= 2;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -72,6 +91,9 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
 
+                // Salva a última pesquisa no SharedPreferences (dado não sensível)
+                _prefsService.saveLastSearch(query);
+
                 // Modifica o estado global via Provider
                 context.read<WorkoutProvider>().setSearchQuery(query);
 
@@ -100,6 +122,7 @@ class _MeusTreinosScreenState extends State<MeusTreinosScreen> {
   /// Ação do botão limpar, restaura a listagem completa no estado global
   void _onSecondaryActionClear() {
     _searchController.clear();
+    _prefsService.saveLastSearch('');
     setState(() {
       _isSearchButtonEnabled = false;
     });

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../services/preferences_service.dart';
 import '../theme/app_colors.dart';
 
 /// Tela de Configurações do PaceWeather.
-/// Requisito: Acessada via `Navigator.pushNamed(context, '/settings')` a partir do Drawer.
-/// Permite retorno à tela anterior via `Navigator.pop(context)`.
+/// Demonstra o uso prático do `SharedPreferences` para preferências de interface
+/// (não sensíveis), contrastando com o `flutter_secure_storage` usado para o JWT.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -12,10 +13,31 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final PreferencesService _prefsService = PreferencesService();
+
   bool _weatherNotifications = true;
   bool _useKilometers = true;
   bool _heartRateAlerts = true;
   bool _darkMode = false;
+  String _lastSearchSaved = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    final useKm = await _prefsService.getUseKilometers();
+    final weatherNotif = await _prefsService.getWeatherNotifications();
+    final lastSearch = await _prefsService.getLastSearch();
+    if (!mounted) return;
+    setState(() {
+      _useKilometers = useKm;
+      _weatherNotifications = weatherNotif;
+      _lastSearchSaved = lastSearch;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           tooltip: 'Voltar',
         ),
         title: const Text(
-          'Configurações',
+          'Configurações & Armazenamento',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 17,
             fontWeight: FontWeight.w900,
             color: AppColors.dark,
           ),
@@ -43,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
-          // Banner Didático do Requisito
+          // Banner Didático sobre SharedPreferences vs flutter_secure_storage
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -55,13 +77,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             child: const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.push_pin_outlined,
-                    color: AppColors.dark, size: 22),
+                Icon(Icons.security_rounded, color: AppColors.dark, size: 22),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Requisito: Esta tela foi empilhada via Navigator.pushNamed a partir do Drawer. Ao voltar, é feito o pop da rota.',
+                    'SharedPreferences vs flutter_secure_storage:\n'
+                    '• SharedPreferences: salva estas preferências de UI e última busca em XML/plist (texto puro, NÃO seguro para tokens).\n'
+                    '• flutter_secure_storage: criptografa o JWT via Keystore/Keychain.',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -73,10 +97,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           const Text(
-            'PREFERÊNCIAS DO ATLETA',
+            'PREFERÊNCIAS SALVAS NO SHAREDPREFERENCES',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
@@ -86,25 +110,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 10),
 
-          // Card de Notificações de Clima
           _buildSettingsCard(
             children: [
               SwitchListTile(
                 title: const Text('Notificações de Clima',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                subtitle: const Text('Alertas para melhores horários de corrida'),
+                subtitle:
+                    const Text('Persistido via SharedPreferences (booleano)'),
                 value: _weatherNotifications,
                 activeThumbColor: AppColors.primaryYellow,
                 activeTrackColor: AppColors.dark,
                 onChanged: (val) {
                   setState(() => _weatherNotifications = val);
+                  _prefsService.saveWeatherNotifications(val);
                 },
               ),
               const Divider(height: 1),
               SwitchListTile(
                 title: const Text('Alertas de Zona Cardíaca',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                subtitle: const Text('Avisar se ultrapassar a zona de treino planejada'),
+                subtitle: const Text(
+                    'Avisar se ultrapassar a zona de treino planejada'),
                 value: _heartRateAlerts,
                 activeThumbColor: AppColors.primaryYellow,
                 activeTrackColor: AppColors.dark,
@@ -115,10 +141,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           const Text(
-            'UNIDADES E APARÊNCIA',
+            'UNIDADES, TEMA E ÚLTIMA PESQUISA (SHAREDPREFERENCES)',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
@@ -133,23 +159,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ListTile(
                 title: const Text('Unidade de Distância',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                subtitle: Text(_useKilometers ? 'Quilômetros (km)' : 'Milhas (mi)'),
+                subtitle:
+                    Text(_useKilometers ? 'Quilômetros (km)' : 'Milhas (mi)'),
                 trailing: TextButton(
                   onPressed: () {
-                    setState(() => _useKilometers = !_useKilometers);
+                    final next = !_useKilometers;
+                    setState(() => _useKilometers = next);
+                    _prefsService.saveUseKilometers(next);
                   },
                   child: Text(
                     _useKilometers ? 'Mudar p/ Milhas' : 'Mudar p/ Km',
                     style: const TextStyle(
-                        color: AppColors.primaryBlue, fontWeight: FontWeight.bold),
+                        color: AppColors.primaryBlue,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               const Divider(height: 1),
-              SwitchListTile(
-                title: const Text('Modo Escuro (Em breve)',
+              ListTile(
+                title: const Text('Última Pesquisa Realizada',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                subtitle: const Text('Tema de alto contraste para treinos noturnos'),
+                subtitle: Text(
+                  _lastSearchSaved.isEmpty
+                      ? 'Nenhuma busca salva recentemente'
+                      : 'Termo salvo: "$_lastSearchSaved"',
+                ),
+                leading: const Icon(Icons.history_rounded, color: AppColors.dark),
+              ),
+              const Divider(height: 1),
+              SwitchListTile(
+                title: const Text('Modo Escuro (Preferência de Tema)',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                subtitle:
+                    const Text('Tema de alto contraste para treinos noturnos'),
                 value: _darkMode,
                 activeThumbColor: AppColors.primaryYellow,
                 activeTrackColor: AppColors.dark,
@@ -160,9 +202,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
 
-          // Botão Voltar explícito
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -175,7 +216,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               icon: const Icon(Icons.arrow_back, color: AppColors.dark),
               label: const Text(
-                'Voltar à Navegação Principal (Navigator.pop)',
+                'Voltar à Navegação Principal',
                 style: TextStyle(
                   color: AppColors.dark,
                   fontWeight: FontWeight.bold,
